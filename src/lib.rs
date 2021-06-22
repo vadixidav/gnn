@@ -41,7 +41,7 @@ where
                 .entries
                 .iter()
                 .enumerate()
-                .min_by_key(|(_, (key, value))| insert_key.distance(key))
+                .min_by_key(|(_, (key, _))| insert_key.distance(key))
                 .unwrap()
                 .0;
 

@@ -26,13 +26,21 @@ impl<K, V> Gnn<K, V> {
             entries: vec![],
         }
     }
+
+    pub fn edges(&self) -> impl Iterator<Item = (usize, usize)> + '_ {
+        self.nodes.iter().enumerate().flat_map(|(source, node)| {
+            node.neighbors
+                .iter()
+                .map(move |neighbor| (source, neighbor.node))
+        })
+    }
 }
 
 impl<K, V> Gnn<K, V>
 where
     K: MetricPoint + Clone,
 {
-    fn insert(&mut self, insert_key: K, insert_value: V) -> usize {
+    pub fn insert(&mut self, insert_key: K, insert_value: V) -> usize {
         // First we perform a greedy search to find the greedy destination.
         if let Some(greedy_nn) = self.greedy_search(&insert_key) {
             // Once we have the nearest neighbor from the greedy search,
@@ -65,6 +73,15 @@ where
             self.entries.push((insert_key, insert_value));
             0
         }
+    }
+
+    pub fn search(&self, query_key: &K) -> Option<&(K, V)> {
+        self.greedy_search(query_key)
+            .map(|ix| self.entries.get(ix).unwrap())
+    }
+
+    pub fn search_index(&self, query_key: &K) -> Option<usize> {
+        self.greedy_search(query_key)
     }
 
     fn greedy_search(&self, query_key: &K) -> Option<usize> {

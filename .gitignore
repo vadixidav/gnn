@@ -1,3 +1,9 @@
+# CSV files for recall data
+*.csv
+
+# Akaze data for recall graph
+/akaze
+
 # Rust
 /target
 Cargo.lock
